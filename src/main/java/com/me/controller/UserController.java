@@ -1,7 +1,9 @@
 package com.me.controller;
 
+import java.net.URL;
 import java.util.Random;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -11,6 +13,8 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +31,29 @@ import com.me.pojo.User;
 public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
+	
+	@Autowired
+	@Qualifier("userDao")
+	UserDAO userDao;
+	
+	@PostConstruct
+	public void init() {
+		User u = new User();
+		u.setUserEmail("admin@admin.com");
+		u.setPassword("1");
+		u.setStatus(1);
+		u.setRoleName("admin");
+		try {
+			u = userDao.register(u);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String userLoginForm() {
+		return "user-login";
+	}
 	@RequestMapping(value = "/user/login.htm", method = RequestMethod.GET)
 	public String showLoginForm() {
 
@@ -43,7 +69,14 @@ public class UserController {
 			User u = userDao.get(username, password);
 
 			if (u != null && u.getStatus() == 1) {
-				return "user-dashboard";
+				if(u.getRoleName().equals("admin")) {
+					return "admin";
+				}else if(u.getRoleName().equals("shopowner")) {
+					return "shop-owner-init";
+				}else {
+					return "user";
+				}
+				
 			} else if (u != null && u.getStatus() == 0) {
 				map.addAttribute("errorMessage", "Please activate your account to login!");
 				return "error";
@@ -61,8 +94,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/user/create.htm", method = RequestMethod.GET)
-	public String showCreateForm() {
-
+	public String showCreateForm(HttpServletRequest request) {
+		
 		return "user-create-form";
 	}
 
@@ -80,12 +113,18 @@ public class UserController {
 			user.setStatus(0);
 
 			try {
+				URL url;
+				url = new URL(request.getRequestURL().toString());
+				String scheme = url.getProtocol();
+				String host = url.getHost();
+				int port = url.getPort();
+				String contextPath = request.getContextPath();
 				User u = userDao.register(user);
 				Random rand = new Random();
 				int randomNum1 = rand.nextInt(5000000);
 				int randomNum2 = rand.nextInt(5000000);
 				try {
-					String str = "http://localhost:8080/lab10/user/validateemail.htm?email=" + useremail + "&key1="
+					String str = scheme+"://"+host+":"+port+contextPath+"/user/validateemail.htm?email=" + useremail + "&key1="
 							+ randomNum1 + "&key2=" + randomNum2;
 					session.setAttribute("key1", randomNum1);
 					session.setAttribute("key2", randomNum2);
@@ -95,7 +134,6 @@ public class UserController {
 					System.out.println("Email cannot be sent");
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -137,7 +175,13 @@ public class UserController {
 		int randomNum1 = rand.nextInt(5000000);
 		int randomNum2 = rand.nextInt(5000000);
 		try {
-			String str = "http://localhost:8080/lab10/user/validateemail.htm?email=" + useremail + "&key1=" + randomNum1
+			URL url;
+			url = new URL(request.getRequestURL().toString());
+			String scheme = url.getProtocol();
+			String host = url.getHost();
+			int port = url.getPort();
+			String contextPath = request.getContextPath();
+			String str = scheme+"://"+host+":"+port+contextPath+"/user/validateemail.htm?email=" + useremail + "&key1=" + randomNum1
 					+ "&key2=" + randomNum2;
 			session.setAttribute("key1", randomNum1);
 			session.setAttribute("key2", randomNum2);
