@@ -92,7 +92,9 @@ public class UserController {
 				}else {
 					List<Product> prodList = new ArrayList();
 					prodList = productDao.getAllProducts();
+					int checkedProd = productDao.getCheckedProducts();
 					mv.addObject("prodList",prodList);
+					mv.addObject("checkedProd",checkedProd);
 					List<Product> cartProdList = new ArrayList();
 					cartProdList = productDao.getUserProducts(u.getId());
 					mv.addObject("cartProdList",cartProdList);

@@ -31,7 +31,8 @@ public class ProductDAO extends DAO {
 	public List<Product> getAllProducts() {
 		try {
 			begin();
-			Query q = getSession().createQuery("from Product");
+			Query q = getSession().createQuery("from Product where prodStatus=:prodStatus");
+			q.setString("prodStatus", "created");
 			List<Product> prodList = q.list();
 			close();
 			return prodList;
@@ -54,5 +55,19 @@ public class ProductDAO extends DAO {
 			System.out.println("Error getting Product List " + e.getMessage());
 		}
 		return null;
+	}
+
+	public int getCheckedProducts() {
+		try {
+			begin();
+			Query q = getSession().createQuery("select count(*) from Product where prodStatus=:prodStatus");
+			q.setString("prodStatus", "checked");
+			Long count = (Long)q.uniqueResult();
+			close();
+			return Long.valueOf(count).intValue();
+			} catch (HibernateException e) {
+				System.out.println("Error getting Product List " + e.getMessage());
+			}
+			return 0;
 	}
 }
