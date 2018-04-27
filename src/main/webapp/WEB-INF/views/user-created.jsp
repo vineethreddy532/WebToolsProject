@@ -10,6 +10,6 @@
 <body>
 	Email has been sent to your inbox , please click on the link to activate your account !
 	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
-	<a href="${contextPath}/user/login.htm">Click her to login</a>
+	<a href="${contextPath}/login.htm">Click her to login</a>
 </body>
 </html>

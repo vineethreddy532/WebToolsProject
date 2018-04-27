@@ -19,6 +19,7 @@ public class ProductDAO extends DAO {
 			begin();
 			getSession().save(p);
 			commit();
+			close();
 			return p;
 
 		} catch (HibernateException e) {
@@ -32,6 +33,7 @@ public class ProductDAO extends DAO {
 			begin();
 			Query q = getSession().createQuery("from Product");
 			List<Product> prodList = q.list();
+			close();
 			return prodList;
 
 		} catch (HibernateException e) {
@@ -46,6 +48,7 @@ public class ProductDAO extends DAO {
 		Query q = getSession().createQuery("from Product where id=:userId");
 		q.setLong("userId", userId);
 		List<Product> prodList = q.list();
+		close();
 		return prodList;
 		} catch (HibernateException e) {
 			System.out.println("Error getting Product List " + e.getMessage());

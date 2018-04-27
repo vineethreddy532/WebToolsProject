@@ -7,8 +7,8 @@
 
 </head>
 <body>
-<a href="user-shop-checkout.htm"></a>
-<a href="addShopProduct.htm"></a>
-<a href="viewShopProduct.htm"></a>
+<a href="user-shop-checkout.htm">User Checked Products</a>
+<a href="addShopProducts.htm">Add Products</a>
+<a href="viewShopProduct.htm">View Current Products</a>
 </body>
 </html>

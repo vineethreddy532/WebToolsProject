@@ -11,7 +11,7 @@
 <body>
 	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 	<font color="red">${captchamsg}</font>
-	<form action="${contextPath}/user/forgotpassword.htm" method="POST">
+	<form action="${contextPath}/forgotpassword.htm" method="POST">
 		<table>
 			<tr>
 				<td>Enter your email:</td>

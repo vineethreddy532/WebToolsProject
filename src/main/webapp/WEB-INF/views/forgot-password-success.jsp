@@ -10,6 +10,6 @@
 <body>
 	Your password was emailed to you.
 	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
-	<a href="${contextPath}/user/login.htm">Click here to login</a>	
+	<a href="${contextPath}/login.htm">Click here to login</a>	
 </body>
 </html>

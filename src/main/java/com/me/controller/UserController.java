@@ -49,15 +49,18 @@ public class UserController {
 	
 	@PostConstruct
 	public void init() {
-		User u = new User();
-		u.setUserEmail("admin@admin.com");
-		u.setPassword("1");
-		u.setStatus(1);
-		u.setRoleName("admin");
-		try {
-			u = userDao.register(u);
-		} catch (Exception e) {
-			e.printStackTrace();
+		User existUser =userDao.checkInitialUser("admin@admin.com");
+		if(existUser==null) {
+			User u = new User();
+			u.setUserEmail("admin@admin.com");
+			u.setPassword("1");
+			u.setStatus(1);
+			u.setRoleName("admin");
+			try {
+				u = userDao.register(u);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -65,13 +68,13 @@ public class UserController {
 	public String userLoginForm() {
 		return "user-login";
 	}
-	@RequestMapping(value = "/user/login.htm", method = RequestMethod.GET)
+	@RequestMapping(value = "/login.htm", method = RequestMethod.GET)
 	public String showLoginForm() {
 
 		return "user-login";
 	}
 
-	@RequestMapping(value = "/user/login.htm", method = RequestMethod.POST)
+	@RequestMapping(value = "/login.htm", method = RequestMethod.POST)
 	public ModelAndView handleLoginForm(HttpServletRequest request, UserDAO userDao, ModelMap map) {
 
 		HttpSession session = request.getSession();
@@ -111,13 +114,13 @@ public class UserController {
 
 	}
 
-	@RequestMapping(value = "/user/create.htm", method = RequestMethod.GET)
+	@RequestMapping(value = "/create.htm", method = RequestMethod.GET)
 	public String showCreateForm(HttpServletRequest request) {
 		
 		return "user-create-form";
 	}
 
-	@RequestMapping(value = "/user/create.htm", method = RequestMethod.POST)
+	@RequestMapping(value = "/create.htm", method = RequestMethod.POST)
 	public String handleCreateForm(HttpServletRequest request, UserDAO userDao, ModelMap map) {
 		Captcha captcha = Captcha.load(request, "CaptchaObject");
 		String captchaCode = request.getParameter("captchaCode");
@@ -129,7 +132,12 @@ public class UserController {
 			user.setUserEmail(useremail);
 			user.setPassword(password);
 			user.setStatus(0);
-			user.setRoleName("customer");
+			String role = request.getParameter("role");
+			if(role==null) {
+				user.setRoleName("customer");
+			}else {
+				user.setRoleName(role);
+			}
 			try {
 				URL url;
 				url = new URL(request.getRequestURL().toString());
@@ -142,7 +150,7 @@ public class UserController {
 				int randomNum1 = rand.nextInt(5000000);
 				int randomNum2 = rand.nextInt(5000000);
 				try {
-					String str = scheme+"://"+host+":"+port+contextPath+"/user/validateemail.htm?email=" + useremail + "&key1="
+					String str = scheme+"://"+host+":"+port+contextPath+"/validateemail.htm?email=" + useremail + "&key1="
 							+ randomNum1 + "&key2=" + randomNum2;
 					session.setAttribute("key1", randomNum1);
 					session.setAttribute("key2", randomNum2);
@@ -162,13 +170,13 @@ public class UserController {
 		return "user-created";
 	}
 
-	@RequestMapping(value = "/user/forgotpassword.htm", method = RequestMethod.GET)
+	@RequestMapping(value = "/forgotpassword.htm", method = RequestMethod.GET)
 	public String getForgotPasswordForm(HttpServletRequest request) {
 		
 		return "forgot-password";
 	}
 
-	@RequestMapping(value = "/user/forgotpassword.htm", method = RequestMethod.POST)
+	@RequestMapping(value = "/forgotpassword.htm", method = RequestMethod.POST)
 	public String handleForgotPasswordForm(HttpServletRequest request, UserDAO userDao) {
 
 		String useremail = request.getParameter("useremail");
@@ -199,7 +207,7 @@ public class UserController {
 			String host = url.getHost();
 			int port = url.getPort();
 			String contextPath = request.getContextPath();
-			String str = scheme+"://"+host+":"+port+contextPath+"/user/validateemail.htm?email=" + useremail + "&key1=" + randomNum1
+			String str = scheme+"://"+host+":"+port+contextPath+"/validateemail.htm?email=" + useremail + "&key1=" + randomNum1
 					+ "&key2=" + randomNum2;
 			session.setAttribute("key1", randomNum1);
 			session.setAttribute("key2", randomNum2);
@@ -230,13 +238,9 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "user/validateemail.htm", method = RequestMethod.GET)
+	@RequestMapping(value = "validateemail.htm", method = RequestMethod.GET)
 	public String validateEmail(HttpServletRequest request, UserDAO userDao, ModelMap map) {
 
-		// The user will be sent the following link when the use registers
-		// This is the format of the email
-		// http://hostname:8080/lab10/user/validateemail.htm?email=useremail&key1=<random_number>&key2=<body
-		// of the email that when user registers>
 		HttpSession session = request.getSession();
 		String email = request.getParameter("email");
 		int key1 = Integer.parseInt(request.getParameter("key1"));

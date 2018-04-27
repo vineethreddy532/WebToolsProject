@@ -19,12 +19,13 @@
             <c:forEach begin="1" end="${requestScope.noOfProducts}" var="i">
                     <tr name="product${i}">
                         <td><input name="productName${i}" type="text" required="true"></td>
-                        <td><input name="price${i}" type="text" required="true"></td>
+                        <td><input name="price${i}" type="number" step="0.0001" min="1" required="true"></td>
                         <td><input name="prodLocation${i}" type="text" required="true"></td>
                     </tr> 
                 </c:forEach>
         </table>
              <br> <br>
+             <input type="hidden" name="noOfProducts" value="${noOfProducts}">
                     <input type="submit" value="Add Products">      
         </form>
 </body>

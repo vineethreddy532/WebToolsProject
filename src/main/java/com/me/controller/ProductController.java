@@ -21,20 +21,27 @@ public class ProductController {
 	@Qualifier("productDao")
 	ProductDAO productDao;
 	
-	@RequestMapping(value = "/user-shop-checkout", method = RequestMethod.POST)
+	@RequestMapping(value = "/user-shop-checkout.htm", method = RequestMethod.GET)
 	protected String checkedProducts(HttpServletRequest request) throws Exception {
 		return "user-shop-checkout";
 	}
 	
-	@RequestMapping(value = "/addShopProduct.htm", method = RequestMethod.POST)
+	@RequestMapping(value = "/addShopProducts.htm", method = RequestMethod.GET)
 	protected String viewProduct(HttpServletRequest request) throws Exception {
-		return "addShopProduct.htm";
+		return "addShopProducts";
 	}
 	
-	@RequestMapping(value = "/viewShopProduct", method = RequestMethod.POST)
+	@RequestMapping(value = "/viewShopProduct.htm", method = RequestMethod.GET)
 	protected String addProducts(HttpServletRequest request) throws Exception {
 		return "viewShopProduct";
 	}
+	
+	@RequestMapping(value = "/sproducts.htm", method = RequestMethod.POST)
+	protected ModelAndView numberOfProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		return new ModelAndView("sproducts","noOfProducts",request.getParameter("noOfProducts"));
+	}
+	
 	
 	@RequestMapping(value = "/afteraddproducts", method = RequestMethod.POST)
 	protected ModelAndView afterAddProducts(HttpServletRequest request) throws Exception {
@@ -45,7 +52,7 @@ public class ProductController {
 		for(int i=0;i<noOfProducts;i++){
         Product products = new Product();
         products.setProductName(request.getParameter("productName"+(i+1)));
-        products.setProdLocation(request.getParameter("price"+(i+1)));
+        products.setProdLocation(request.getParameter("prodLocation"+(i+1)));
         products.setPrice(Float.parseFloat(request.getParameter("price"+(i+1))));
         productDao.register(products);
     }

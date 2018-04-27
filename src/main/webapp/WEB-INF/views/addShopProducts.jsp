@@ -9,7 +9,7 @@
 <body>
 <h1>How many products do you want to add</h1>
         <form action="sproducts.htm" method="post">
-            <input type="number" name="noOfBooks" min="1" required="true">
+            <input type="number" name="noOfProducts" min="1" required="true">
             <input type="submit" value="Submit">
       </form>
 </body>

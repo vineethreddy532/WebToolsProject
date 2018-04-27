@@ -10,7 +10,7 @@
 <body>
 
 	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
-	<form action="${contextPath}/user/login.htm" method="POST">
+	<form action="${contextPath}/login.htm" method="POST">
 		<table>
 		<tr>
 		    <td>Email:</td>
@@ -28,7 +28,7 @@
 				
 		</table>
 	</form>
-	<a href="${contextPath}/user/forgotpassword.htm">Forgot password?</a>
-	<a href="${contextPath}/user/create.htm">Register User</a>
+	<a href="${contextPath}/forgotpassword.htm">Forgot password?</a>
+	<a href="${contextPath}/create.htm">Register User</a>
 </body>
 </html>
