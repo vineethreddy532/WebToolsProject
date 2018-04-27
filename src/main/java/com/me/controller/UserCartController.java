@@ -29,20 +29,53 @@ public class UserCartController {
 	CartDAO cartDao;
 	
 	@RequestMapping(value = "/cartChange.htm", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String Submit(HttpServletRequest request, @RequestParam("name") String name,@RequestParam("price") String price, @RequestParam("location") String location) {
+	public @ResponseBody String submit(HttpServletRequest request, @RequestParam("name") String name,@RequestParam("price") String price, @RequestParam("location") String location) {
 		HttpSession session = request.getSession();
+		name = name.replaceAll("^\"|\"$", "");
+		price = price.replaceAll("^\"|\"$", "");
+		location = location.replaceAll("^\"|\"$", "");
+		double d = Double.parseDouble(price);
+		System.out.println(d);
 		User loggedInUser = (User) session.getAttribute("loggedInUser");
 		cartDao.updateCheckedProduct(name,price,location,loggedInUser);
+		return null;
+	}
+	
+	@RequestMapping(value = "/removeCart.htm", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String removeCart(HttpServletRequest request, @RequestParam("name") String name,@RequestParam("price") String price, @RequestParam("location") String location) {
+		HttpSession session = request.getSession();
+		name = name.replaceAll("^\"|\"$", "");
+		price = price.replaceAll("^\"|\"$", "");
+		location = location.replaceAll("^\"|\"$", "");
+		double d = Double.parseDouble(price);
+		User loggedInUser = (User) session.getAttribute("loggedInUser");
+		cartDao.updateRemovedProduct(name,price,location,loggedInUser);
 		return null;
 	}
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	protected ModelAndView afterAddProducts(HttpServletRequest request) throws Exception {
 		List<Product> checkedList = new ArrayList();
+		ModelAndView mv = new ModelAndView();
 		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
 		checkedList = cartDao.findCheckedList(u);
-		
-		return new ModelAndView("shop-owner-init", "", "");
+		mv.addObject("checkedList",checkedList);
+		mv.setViewName("checkout");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/submitProduct", method = RequestMethod.POST)
+	protected ModelAndView afterSubmitProducts(HttpServletRequest request) throws Exception {
+		List<Product> submitedList = new ArrayList();
+		ModelAndView mv = new ModelAndView();
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		submitedList = cartDao.findCheckedList(u);
+		for(Product p:submitedList) {
+			cartDao.updateConfirmedStatus(p);
+		}
+		mv.setViewName("submitProduct");
+		return mv;
 	}
 }

@@ -9,6 +9,6 @@
 <body>
 <a href="user-shop-checkout.htm">User Checked Products</a>
 <a href="addShopProducts.htm">Add Products</a>
-<a href="viewShopProduct.htm">View Current Products</a>
+<a href="viewshopproduct.htm">View Current Products</a>
 </body>
 </html>

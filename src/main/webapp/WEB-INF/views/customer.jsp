@@ -9,22 +9,24 @@
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-	$("#cartButton").click(function(event){
-		var $row = $(this).closest("tr");  
-	    $tds = $row.find("td");             
-	var op = [];
-	var i = 0;
-	$.each($tds, function() {      
-		op[i]=$(this).text();
-		i++;
-	});
-		$($(this).closest("tr")).remove();
-		event.preventDefault();
-		callAjax(op);
-	});
+function myFunction(e){
+	var $row = $(e).closest("tr");  
+    $tds = $row.find("td");             
+var op = [];
+var i = 0;
+$.each($tds, function() {      
+	op[i]=$(this).text();
+	i++;
+});
+	$($(e).closest("tr")).remove();
+	event.preventDefault();
+	callAjax(op);
 	var cart = $("#cartItems").val();
-	$("#cartItems").val(cart +1);
+	$("#cartItems").val(parseInt(cart) +1);
+	return false;
+}
+$(document).ready(function() {
+	$("#checkoutButton")
 });
 function callAjax(op) {
 	$.ajax({
@@ -33,19 +35,26 @@ function callAjax(op) {
 	     data: { name: op[0], price:op[1], location: op[2] }
 	})
 }
+function myFunction2() {
+	document.getElementById("myForm").method = "POST";
+    document.getElementById("myForm").action = "checkout.htm";
+}
 </script>
 <body>
 <h1>Cart Items<input type="text" id="cartItems" value="${checkedProd}" disabled></h1>
-<form action="${contextPath}/checkout.htm" method="POST">
+  <form id="myForm">
 <table>
 <c:forEach items = "${prodList}" var = "prod">
          <tr>
          <td>"${prod.productName}"</td>
          <td>"${prod.price}"</td>
          <td>"${prod.prodLocation}"</td>
-         <td><button id="cartButton">Add to Cart</button></td>
+         <td><button id="cartButton" onclick="myFunction(this)">Add to Cart</button></td>
          </tr>
       </c:forEach>
+      <tr>
+      <td><button onclick="myFunction2()">Checkout</button></td>
+      </tr>
 </table>
 </form>
 </body>

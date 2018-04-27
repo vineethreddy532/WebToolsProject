@@ -8,21 +8,19 @@
 <title>Insert title here</title>
 </head>
 <body>
+<form action="shop-owner-init.htm" method="POST">
 <table>
-<c:forEach items = "${userList}" var = "prod">
+<c:forEach items = "${prodList}" var = "prod">
          <tr>
-         <td>"${prod.userEmail}"</td>
-         <td>"${prod.id}"</td>
+         <td>"${prod.productName}"</td>
+         <td>"${prod.price}"</td>
+         <td>"${prod.prodLocation}"</td>
          </tr>
       </c:forEach>
+      <tr>
+      <td><input type="submit" value="Ship Products"></td>
+      </tr>
 </table>
-<form action="viewConfirmedProd.htm" method="POST">
-<select name="productList">
-<c:forEach items = "${userList}" var = "prod">
-        <option value="${prod.userEmail}">${prod.userEmail}</option>
-      </c:forEach>
-     </select>
-     <input type="submit" value="Select User">
 </form>
 </body>
 </html>

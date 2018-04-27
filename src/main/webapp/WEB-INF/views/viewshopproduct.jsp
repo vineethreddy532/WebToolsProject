@@ -8,21 +8,15 @@
 <title>Insert title here</title>
 </head>
 <body>
+${checkedList}
 <table>
-<c:forEach items = "${userList}" var = "prod">
+<c:forEach items = "${checkedList}" var = "prod">
          <tr>
-         <td>"${prod.userEmail}"</td>
-         <td>"${prod.id}"</td>
+         <td>"${prod.productName}"</td>
+         <td>"${prod.price}"</td>
+         <td>"${prod.prodLocation}"</td>
          </tr>
       </c:forEach>
 </table>
-<form action="viewConfirmedProd.htm" method="POST">
-<select name="productList">
-<c:forEach items = "${userList}" var = "prod">
-        <option value="${prod.userEmail}">${prod.userEmail}</option>
-      </c:forEach>
-     </select>
-     <input type="submit" value="Select User">
-</form>
 </body>
 </html>

@@ -1,5 +1,8 @@
 package com.me.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -25,8 +28,13 @@ public class ProductController {
 	ProductDAO productDao;
 
 	@RequestMapping(value = "/user-shop-checkout.htm", method = RequestMethod.GET)
-	protected String checkedProducts(HttpServletRequest request) throws Exception {
-		return "user-shop-checkout";
+	protected ModelAndView checkedProducts(HttpServletRequest request) throws Exception {
+		List<User> userList = new ArrayList();
+		ModelAndView mv = new ModelAndView();
+		userList = productDao.getAllUsers();
+		mv.addObject("userList",userList);
+		mv.setViewName("user-shop-checkout");
+		return mv;
 	}
 
 	@RequestMapping(value = "/addShopProducts.htm", method = RequestMethod.GET)
@@ -34,9 +42,14 @@ public class ProductController {
 		return "addShopProducts";
 	}
 
-	@RequestMapping(value = "/viewShopProduct.htm", method = RequestMethod.GET)
-	protected String addProducts(HttpServletRequest request) throws Exception {
-		return "viewShopProduct";
+	@RequestMapping(value = "/viewshopproduct.htm", method = RequestMethod.GET)
+	protected ModelAndView addProducts(HttpServletRequest request) throws Exception {
+		List<Product> checkedList = new ArrayList();
+		ModelAndView mv = new ModelAndView();
+		checkedList = productDao.findProductList();
+		mv.addObject("checkedList",checkedList);
+		mv.setViewName("viewshopproduct");
+		return mv;
 	}
 
 	@RequestMapping(value = "/sproducts.htm", method = RequestMethod.POST)
@@ -59,5 +72,27 @@ public class ProductController {
 			productDao.register(products);
 		}
 		return new ModelAndView("shop-owner-init", "", "");
+	}
+	
+	@RequestMapping(value = "/viewConfirmedProd", method = RequestMethod.POST)
+	protected ModelAndView toConfirmProd(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		String email = request.getParameter("productList");
+		List<Product> prodList = productDao.getProducts(email);
+		session.setAttribute("prodList", prodList);
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("prodList",prodList);
+		mv.setViewName("viewConfirmedProd");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/shop-owner-init", method = RequestMethod.POST)
+	protected String afterConfirm(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		List<Product> prodList = (List<Product>) session.getAttribute("prodList");
+		for(Product p:prodList) {
+			productDao.updateStatus(p);
+		}
+		return "shop-owner-init";
 	}
 }
