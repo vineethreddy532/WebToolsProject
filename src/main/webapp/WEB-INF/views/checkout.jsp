@@ -5,7 +5,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <title>eCommerce Application</title>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
@@ -39,8 +42,23 @@ function myFunction2() {
 }
 </script>
 <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="viewMyItems.htm">View My Items</a></li>
+      <li><a href="logout.htm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
 <form id="myForm">
-<table>
+  	<div class="form-group">
+<table class="table-bordered">
+<tr>
+						<th>Product Name</th>
+						<th>Price</th>
+						<th>Product Location</th>
+					</tr>
 <c:forEach items = "${checkedList}" var = "prod">
          <tr>
          <td>"${prod.productName}"</td>
@@ -51,6 +69,8 @@ function myFunction2() {
       </c:forEach>
       <td><button onclick="myFunction2()">Checkout</button></td>
 </table>
+</div>
 </form>
+</div>
 </body>
 </html>

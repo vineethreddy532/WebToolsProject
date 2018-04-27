@@ -5,10 +5,22 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-</head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <title>eCommerce Application</title>
+  </head>
 <body>
-<table>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="shopOwner.htm">Home</a></li>
+      <li><a href="logout.htm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+<table class="table-bordered">
 <c:forEach items = "${userList}" var = "prod">
          <tr>
          <td>"${prod.userEmail}"</td>
@@ -24,5 +36,6 @@
      </select>
      <input type="submit" value="Select User">
 </form>
+</div>
 </body>
 </html>

@@ -31,6 +31,10 @@ public class UserCartController {
 	@RequestMapping(value = "/cartChange.htm", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String submit(HttpServletRequest request, @RequestParam("name") String name,@RequestParam("price") String price, @RequestParam("location") String location) {
 		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
 		name = name.replaceAll("^\"|\"$", "");
 		price = price.replaceAll("^\"|\"$", "");
 		location = location.replaceAll("^\"|\"$", "");
@@ -44,6 +48,10 @@ public class UserCartController {
 	@RequestMapping(value = "/removeCart.htm", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String removeCart(HttpServletRequest request, @RequestParam("name") String name,@RequestParam("price") String price, @RequestParam("location") String location) {
 		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
 		name = name.replaceAll("^\"|\"$", "");
 		price = price.replaceAll("^\"|\"$", "");
 		location = location.replaceAll("^\"|\"$", "");
@@ -55,9 +63,13 @@ public class UserCartController {
 	
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
 	protected ModelAndView afterAddProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User ul = (User) session.getAttribute("loggedInUser");
+		if(ul==null) {
+			return new ModelAndView("user-login");
+		}
 		List<Product> checkedList = new ArrayList();
 		ModelAndView mv = new ModelAndView();
-		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
 		checkedList = cartDao.findCheckedList(u);
 		mv.addObject("checkedList",checkedList);
@@ -67,15 +79,35 @@ public class UserCartController {
 	
 	@RequestMapping(value = "/submitProduct", method = RequestMethod.POST)
 	protected ModelAndView afterSubmitProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User ul = (User) session.getAttribute("loggedInUser");
+		if(ul==null) {
+			return new ModelAndView("user-login");
+		}
 		List<Product> submitedList = new ArrayList();
 		ModelAndView mv = new ModelAndView();
-		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
 		submitedList = cartDao.findCheckedList(u);
 		for(Product p:submitedList) {
 			cartDao.updateConfirmedStatus(p);
 		}
 		mv.setViewName("submitProduct");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/viewMyItems.htm", method = RequestMethod.GET)
+	protected ModelAndView viewMyProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User ul = (User) session.getAttribute("loggedInUser");
+		if(ul==null) {
+			return new ModelAndView("user-login");
+		}
+		List<Product> submitedList = new ArrayList();
+		ModelAndView mv = new ModelAndView();
+		User u = (User) session.getAttribute("loggedInUser");
+		submitedList = cartDao.findShippedList(u);
+		mv.addObject("prodList",submitedList);
+		mv.setViewName("viewMyItems");
 		return mv;
 	}
 }

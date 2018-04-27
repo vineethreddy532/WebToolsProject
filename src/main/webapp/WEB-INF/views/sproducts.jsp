@@ -5,12 +5,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <title>eCommerce Application</title>
 </head>
 <body>
-<h1>Enter Book Details</h1>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="shopOwner.htm">Home</a></li>
+      <li><a href="logout.htm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+<h1>Enter Product Details</h1>
         <form action="afteraddproducts.htm" method="post">
-        <table name="productTable" border="1px solid">
+        <div class="form-group">
+        <table class="table-hover" name="productTable" border="1px solid">
             <tr>
                 <th>Product Name</th>
                 <th>Price</th>
@@ -27,6 +40,8 @@
              <br> <br>
              <input type="hidden" name="noOfProducts" value="${noOfProducts}">
                     <input type="submit" value="Add Products">      
+                    </div>
         </form>
+        </div>
 </body>
 </html>

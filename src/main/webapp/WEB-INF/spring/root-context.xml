@@ -8,4 +8,5 @@
    	<bean id="userDao" class="com.me.dao.UserDAO"></bean>
    	<bean id="productDao" class="com.me.dao.ProductDAO"></bean>
 	<bean id="cartDao" class="com.me.dao.CartDAO"></bean>
+	<bean id="adminDao" class="com.me.dao.AdminDAO"></bean>
 </beans>

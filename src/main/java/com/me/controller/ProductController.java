@@ -29,6 +29,11 @@ public class ProductController {
 
 	@RequestMapping(value = "/user-shop-checkout.htm", method = RequestMethod.GET)
 	protected ModelAndView checkedProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}
 		List<User> userList = new ArrayList();
 		ModelAndView mv = new ModelAndView();
 		userList = productDao.getAllUsers();
@@ -39,11 +44,31 @@ public class ProductController {
 
 	@RequestMapping(value = "/addShopProducts.htm", method = RequestMethod.GET)
 	protected String viewProduct(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
 		return "addShopProducts";
+	}
+	
+	@RequestMapping(value = "/shopOwner.htm", method = RequestMethod.GET)
+	protected String shopMain(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
+		return "shop-owner-init";
 	}
 
 	@RequestMapping(value = "/viewshopproduct.htm", method = RequestMethod.GET)
 	protected ModelAndView addProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}
 		List<Product> checkedList = new ArrayList();
 		ModelAndView mv = new ModelAndView();
 		checkedList = productDao.findProductList();
@@ -54,11 +79,21 @@ public class ProductController {
 
 	@RequestMapping(value = "/sproducts.htm", method = RequestMethod.POST)
 	protected ModelAndView numberOfProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}
 		return new ModelAndView("sproducts", "noOfProducts", request.getParameter("noOfProducts"));
 	}
 
 	@RequestMapping(value = "/afteraddproducts", method = RequestMethod.POST)
 	protected ModelAndView afterAddProducts(HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}
 		String noOfProd = request.getParameter("noOfProducts");
 		// HttpSession session = request.getSession();
 		// User loggedIn = (User) session.getAttribute("loggedInUser");
@@ -77,6 +112,10 @@ public class ProductController {
 	@RequestMapping(value = "/viewConfirmedProd", method = RequestMethod.POST)
 	protected ModelAndView toConfirmProd(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}
 		String email = request.getParameter("productList");
 		List<Product> prodList = productDao.getProducts(email);
 		session.setAttribute("prodList", prodList);
@@ -89,6 +128,10 @@ public class ProductController {
 	@RequestMapping(value = "/shop-owner-init", method = RequestMethod.POST)
 	protected String afterConfirm(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
 		List<Product> prodList = (List<Product>) session.getAttribute("prodList");
 		for(Product p:prodList) {
 			productDao.updateStatus(p);

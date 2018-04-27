@@ -65,12 +65,38 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String userLoginForm() {
-		return "user-login";
+	public ModelAndView userLoginForm(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-login");
+		}else {
+			if(u.getRoleName().equals("admin")) {
+				return new ModelAndView("admin");
+			}else if(u.getRoleName().equals("shopowner")) {
+				return new ModelAndView("shop-owner-init");
+			}else {
+				ModelAndView mv = new ModelAndView();
+				List<Product> prodList = new ArrayList();
+				prodList = productDao.getAllProducts();
+				int checkedProd = productDao.getCheckedProducts();
+				mv.addObject("prodList",prodList);
+				mv.addObject("checkedProd",checkedProd);
+				List<Product> cartProdList = new ArrayList();
+				cartProdList = productDao.getUserProducts(u.getId());
+				mv.addObject("cartProdList",cartProdList);
+				mv.setViewName("customer");
+				return mv;
+			}
+		}
 	}
 	@RequestMapping(value = "/login.htm", method = RequestMethod.GET)
-	public String showLoginForm() {
-
+	public String showLoginForm(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return "user-login";
+		}
 		return "user-login";
 	}
 
@@ -117,9 +143,31 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/create.htm", method = RequestMethod.GET)
-	public String showCreateForm(HttpServletRequest request) {
+	public ModelAndView showCreateForm(HttpServletRequest request) {
 		
-		return "user-create-form";
+		HttpSession session = request.getSession();
+		User u = (User) session.getAttribute("loggedInUser");
+		if(u==null) {
+			return new ModelAndView("user-create-form");
+		}else {
+			if(u.getRoleName().equals("admin")) {
+				return new ModelAndView("admin");
+			}else if(u.getRoleName().equals("shopowner")) {
+				return new ModelAndView("shop-owner-init");
+			}else {
+				ModelAndView mv = new ModelAndView();
+				List<Product> prodList = new ArrayList();
+				prodList = productDao.getAllProducts();
+				int checkedProd = productDao.getCheckedProducts();
+				mv.addObject("prodList",prodList);
+				mv.addObject("checkedProd",checkedProd);
+				List<Product> cartProdList = new ArrayList();
+				cartProdList = productDao.getUserProducts(u.getId());
+				mv.addObject("cartProdList",cartProdList);
+				mv.setViewName("customer");
+				return mv;
+			}
+		}
 	}
 
 	@RequestMapping(value = "/create.htm", method = RequestMethod.POST)
@@ -127,6 +175,7 @@ public class UserController {
 		Captcha captcha = Captcha.load(request, "CaptchaObject");
 		String captchaCode = request.getParameter("captchaCode");
 		HttpSession session = request.getSession();
+		User ul = (User) session.getAttribute("loggedInUser");
 		if (captcha.validate(captchaCode)) {
 			String useremail = request.getParameter("username");
 			String password = request.getParameter("password");

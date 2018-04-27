@@ -83,4 +83,20 @@ public class CartDAO extends DAO {
 		}
 
 	}
+
+	public List<Product> findShippedList(User u) {
+		try {
+			begin();
+			Query q = getSession().createQuery("from Product where prodStatus=:prodStatus and user=:user");
+			q.setString("prodStatus", "shipped");
+			q.setParameter("user", u);
+			List<Product> pList = q.list();
+			close();
+			return pList;
+		} catch (HibernateException e) {
+			rollback();
+			System.out.println("Error updating Product List " + e.getMessage());
+		}
+		return null;
+	}
 }

@@ -6,13 +6,27 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>User Registration</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>eCommerce Application</title>
 </head>
 <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+    <div class="navbar-header">
+      <a class="navbar-brand">Create Users for Admin</a>
+    </div>
+    </ul>
+  </div>
+</nav>
+<div class="container">
 	<font color="red">${errorMessage}</font>
 	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 	<form action="${contextPath}/create.htm" method="POST">
-		<table>
+	<div class="form-group">
+		<table class="table-striped">
 			<tr>
 				<td>User Email:</td>
 				<td><input type="text" name="username" size="30"
@@ -54,6 +68,8 @@
 			</tr>
 
 		</table>
+		</div>
 	</form>
+	</div>
 </body>
 </html>
