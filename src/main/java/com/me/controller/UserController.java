@@ -1,6 +1,10 @@
 package com.me.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
@@ -19,10 +23,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.captcha.botdetect.web.servlet.Captcha;
+import com.me.dao.ProductDAO;
 import com.me.dao.UserDAO;
 import com.me.pojo.User;
+import com.me.pojo.Product;
 
 /**
  * Handles requests for the application home page.
@@ -35,6 +42,10 @@ public class UserController {
 	@Autowired
 	@Qualifier("userDao")
 	UserDAO userDao;
+	
+	@Autowired
+	@Qualifier("productDao")
+	ProductDAO productDao;
 	
 	@PostConstruct
 	public void init() {
@@ -61,31 +72,38 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/user/login.htm", method = RequestMethod.POST)
-	public String handleLoginForm(HttpServletRequest request, UserDAO userDao, ModelMap map) {
+	public ModelAndView handleLoginForm(HttpServletRequest request, UserDAO userDao, ModelMap map) {
 
+		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		ModelAndView mv = new ModelAndView();
 		try {
 			User u = userDao.get(username, password);
-
 			if (u != null && u.getStatus() == 1) {
+				session.setAttribute("loggedInUser", u);
 				if(u.getRoleName().equals("admin")) {
-					return "admin";
+					return new ModelAndView("admin");
 				}else if(u.getRoleName().equals("shopowner")) {
-					return "shop-owner-init";
+					return new ModelAndView("shop-owner-init");
 				}else {
-					return "user";
+					List<Product> prodList = new ArrayList();
+					prodList = productDao.getAllProducts();
+					mv.addObject("prodList",prodList);
+					List<Product> cartProdList = new ArrayList();
+					cartProdList = productDao.getUserProducts(u.getId());
+					mv.addObject("cartProdList",cartProdList);
+					mv.setViewName("customer");
+					return mv;
 				}
-				
 			} else if (u != null && u.getStatus() == 0) {
 				map.addAttribute("errorMessage", "Please activate your account to login!");
-				return "error";
+				return new ModelAndView("error");
 			} else {
 				map.addAttribute("errorMessage", "Invalid username/password!");
-				return "error";
+				return new ModelAndView("error");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -111,7 +129,7 @@ public class UserController {
 			user.setUserEmail(useremail);
 			user.setPassword(password);
 			user.setStatus(0);
-
+			user.setRoleName("customer");
 			try {
 				URL url;
 				url = new URL(request.getRequestURL().toString());

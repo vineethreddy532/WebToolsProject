@@ -11,5 +11,6 @@
   <property name="hibernate.show_sql">true</property>
   <property name="hibernate.hbm2ddl.auto">create</property>
   <mapping class="com.me.pojo.User"/>
+  <mapping class="com.me.pojo.Product"/>
  </session-factory>
 </hibernate-configuration>
