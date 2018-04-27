@@ -38,19 +38,19 @@ import com.me.pojo.Product;
 public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-	
+
 	@Autowired
 	@Qualifier("userDao")
 	UserDAO userDao;
-	
+
 	@Autowired
 	@Qualifier("productDao")
 	ProductDAO productDao;
-	
+
 	@PostConstruct
 	public void init() {
-		User existUser =userDao.checkInitialUser("admin@admin.com");
-		if(existUser==null) {
+		User existUser = userDao.checkInitialUser("admin@admin.com");
+		if (existUser == null) {
 			User u = new User();
 			u.setUserEmail("admin@admin.com");
 			u.setPassword("1");
@@ -63,38 +63,39 @@ public class UserController {
 			}
 		}
 	}
-	
+
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView userLoginForm(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
-		if(u==null) {
+		if (u == null) {
 			return new ModelAndView("user-login");
-		}else {
-			if(u.getRoleName().equals("admin")) {
+		} else {
+			if (u.getRoleName().equals("admin")) {
 				return new ModelAndView("admin");
-			}else if(u.getRoleName().equals("shopowner")) {
+			} else if (u.getRoleName().equals("shopowner")) {
 				return new ModelAndView("shop-owner-init");
-			}else {
+			} else {
 				ModelAndView mv = new ModelAndView();
 				List<Product> prodList = new ArrayList();
 				prodList = productDao.getAllProducts();
 				int checkedProd = productDao.getCheckedProducts();
-				mv.addObject("prodList",prodList);
-				mv.addObject("checkedProd",checkedProd);
+				mv.addObject("prodList", prodList);
+				mv.addObject("checkedProd", checkedProd);
 				List<Product> cartProdList = new ArrayList();
 				cartProdList = productDao.getUserProducts(u.getId());
-				mv.addObject("cartProdList",cartProdList);
+				mv.addObject("cartProdList", cartProdList);
 				mv.setViewName("customer");
 				return mv;
 			}
 		}
 	}
+
 	@RequestMapping(value = "/login.htm", method = RequestMethod.GET)
 	public String showLoginForm(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
-		if(u==null) {
+		if (u == null) {
 			return "user-login";
 		}
 		return "user-login";
@@ -111,19 +112,19 @@ public class UserController {
 			User u = userDao.get(username, password);
 			if (u != null && u.getStatus() == 1) {
 				session.setAttribute("loggedInUser", u);
-				if(u.getRoleName().equals("admin")) {
+				if (u.getRoleName().equals("admin")) {
 					return new ModelAndView("admin");
-				}else if(u.getRoleName().equals("shopowner")) {
+				} else if (u.getRoleName().equals("shopowner")) {
 					return new ModelAndView("shop-owner-init");
-				}else {
+				} else {
 					List<Product> prodList = new ArrayList();
 					prodList = productDao.getAllProducts();
 					int checkedProd = productDao.getCheckedProducts();
-					mv.addObject("prodList",prodList);
-					mv.addObject("checkedProd",checkedProd);
+					mv.addObject("prodList", prodList);
+					mv.addObject("checkedProd", checkedProd);
 					List<Product> cartProdList = new ArrayList();
 					cartProdList = productDao.getUserProducts(u.getId());
-					mv.addObject("cartProdList",cartProdList);
+					mv.addObject("cartProdList", cartProdList);
 					mv.setViewName("customer");
 					return mv;
 				}
@@ -144,26 +145,26 @@ public class UserController {
 
 	@RequestMapping(value = "/create.htm", method = RequestMethod.GET)
 	public ModelAndView showCreateForm(HttpServletRequest request) {
-		
+
 		HttpSession session = request.getSession();
 		User u = (User) session.getAttribute("loggedInUser");
-		if(u==null) {
+		if (u == null) {
 			return new ModelAndView("user-create-form");
-		}else {
-			if(u.getRoleName().equals("admin")) {
+		} else {
+			if (u.getRoleName().equals("admin")) {
 				return new ModelAndView("admin");
-			}else if(u.getRoleName().equals("shopowner")) {
+			} else if (u.getRoleName().equals("shopowner")) {
 				return new ModelAndView("shop-owner-init");
-			}else {
+			} else {
 				ModelAndView mv = new ModelAndView();
 				List<Product> prodList = new ArrayList();
 				prodList = productDao.getAllProducts();
 				int checkedProd = productDao.getCheckedProducts();
-				mv.addObject("prodList",prodList);
-				mv.addObject("checkedProd",checkedProd);
+				mv.addObject("prodList", prodList);
+				mv.addObject("checkedProd", checkedProd);
 				List<Product> cartProdList = new ArrayList();
 				cartProdList = productDao.getUserProducts(u.getId());
-				mv.addObject("cartProdList",cartProdList);
+				mv.addObject("cartProdList", cartProdList);
 				mv.setViewName("customer");
 				return mv;
 			}
@@ -184,9 +185,9 @@ public class UserController {
 			user.setPassword(password);
 			user.setStatus(0);
 			String role = request.getParameter("role");
-			if(role==null) {
+			if (role == null) {
 				user.setRoleName("customer");
-			}else {
+			} else {
 				user.setRoleName(role);
 			}
 			try {
@@ -201,12 +202,11 @@ public class UserController {
 				int randomNum1 = rand.nextInt(5000000);
 				int randomNum2 = rand.nextInt(5000000);
 				try {
-					String str = scheme+"://"+host+":"+port+contextPath+"/validateemail.htm?email=" + useremail + "&key1="
-							+ randomNum1 + "&key2=" + randomNum2;
+					String str = scheme + "://" + host + ":" + port + contextPath + "/validateemail.htm?email="
+							+ useremail + "&key1=" + randomNum1 + "&key2=" + randomNum2;
 					session.setAttribute("key1", randomNum1);
 					session.setAttribute("key2", randomNum2);
-					sendEmail(useremail,
-							"Click on this link to activate your account : "+ str);
+					sendEmail(useremail, "Click on this link to activate your account : " + str);
 				} catch (Exception e) {
 					System.out.println("Email cannot be sent");
 				}
@@ -223,7 +223,7 @@ public class UserController {
 
 	@RequestMapping(value = "/forgotpassword.htm", method = RequestMethod.GET)
 	public String getForgotPasswordForm(HttpServletRequest request) {
-		
+
 		return "forgot-password";
 	}
 
@@ -258,16 +258,15 @@ public class UserController {
 			String host = url.getHost();
 			int port = url.getPort();
 			String contextPath = request.getContextPath();
-			String str = scheme+"://"+host+":"+port+contextPath+"/validateemail.htm?email=" + useremail + "&key1=" + randomNum1
-					+ "&key2=" + randomNum2;
+			String str = scheme + "://" + host + ":" + port + contextPath + "/validateemail.htm?email=" + useremail
+					+ "&key1=" + randomNum1 + "&key2=" + randomNum2;
 			session.setAttribute("key1", randomNum1);
 			session.setAttribute("key2", randomNum2);
-			sendEmail(useremail,
-					"Click on this link to activate your account : "+ str);
+			sendEmail(useremail, "Click on this link to activate your account : " + str);
 		} catch (Exception e) {
 			System.out.println("Email cannot be sent");
 		}
-		
+
 		return "user-created";
 	}
 
@@ -296,11 +295,10 @@ public class UserController {
 		String email = request.getParameter("email");
 		int key1 = Integer.parseInt(request.getParameter("key1"));
 		int key2 = Integer.parseInt(request.getParameter("key2"));
-		System.out.println(session.getAttribute("key1") );
-		System.out.println(session.getAttribute("key2") );
-		
-		
-		if ((Integer)(session.getAttribute("key1")) == key1 && ((Integer)session.getAttribute("key2"))== key2) {
+		System.out.println(session.getAttribute("key1"));
+		System.out.println(session.getAttribute("key2"));
+
+		if ((Integer) (session.getAttribute("key1")) == key1 && ((Integer) session.getAttribute("key2")) == key2) {
 			try {
 				System.out.println("HI________");
 				boolean updateStatus = userDao.updateUser(email);

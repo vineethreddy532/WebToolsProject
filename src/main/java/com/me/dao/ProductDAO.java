@@ -9,11 +9,11 @@ import com.me.pojo.Product;
 import com.me.pojo.User;
 
 public class ProductDAO extends DAO {
-	
+
 	public ProductDAO() {
-		
+
 	}
-	
+
 	public Product register(Product p) throws Exception {
 		try {
 			begin();
@@ -45,12 +45,12 @@ public class ProductDAO extends DAO {
 
 	public List<Product> getUserProducts(long userId) {
 		try {
-		begin();
-		Query q = getSession().createQuery("from Product where id=:userId");
-		q.setLong("userId", userId);
-		List<Product> prodList = q.list();
-		close();
-		return prodList;
+			begin();
+			Query q = getSession().createQuery("from Product where id=:userId");
+			q.setLong("userId", userId);
+			List<Product> prodList = q.list();
+			close();
+			return prodList;
 		} catch (HibernateException e) {
 			System.out.println("Error getting Product List " + e.getMessage());
 		}
@@ -62,13 +62,13 @@ public class ProductDAO extends DAO {
 			begin();
 			Query q = getSession().createQuery("select count(*) from Product where prodStatus=:prodStatus");
 			q.setString("prodStatus", "checked");
-			Long count = (Long)q.uniqueResult();
+			Long count = (Long) q.uniqueResult();
 			close();
 			return Long.valueOf(count).intValue();
-			} catch (HibernateException e) {
-				System.out.println("Error getting Product List " + e.getMessage());
-			}
-			return 0;
+		} catch (HibernateException e) {
+			System.out.println("Error getting Product List " + e.getMessage());
+		}
+		return 0;
 	}
 
 	public List<Product> findProductList() {
@@ -105,7 +105,7 @@ public class ProductDAO extends DAO {
 			begin();
 			Query q = getSession().createQuery("from User where userEmail=:userEmail");
 			q.setString("userEmail", email);
-			User u = (User)q.uniqueResult();
+			User u = (User) q.uniqueResult();
 			close();
 			begin();
 			Query q1 = getSession().createQuery("from Product where user=:user");
@@ -130,6 +130,6 @@ public class ProductDAO extends DAO {
 			rollback();
 			System.out.println("Error updating Product List " + e.getMessage());
 		}
-		
+
 	}
 }
