@@ -1,6 +1,6 @@
                                     INFO-6250 Web Development Tools & Methods SEC 04 
 
-                                             FINAL PROJECT 
+                                             FINAL PROJECT - ECommerce Application
                                     Name: SUMANTH HAGALAVADI GOPALAKRISHNA 
                                              NUID: 001824723 
 
